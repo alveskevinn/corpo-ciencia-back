@@ -137,7 +137,7 @@ dist
 # SvelteKit build / generate output
 .svelte-kit
 
-.terraform*
+.terraform/
 *.tfstate
 *.tfstate.backup
-.DS_Store  # Para usuários de macOS
+.DS_Store
