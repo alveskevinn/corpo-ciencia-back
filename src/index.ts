@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import athleteRoutes from './routes/athlete.routes';  // Mantendo as rotas de atletas
 import userRoutes from './routes/user.routes';  // Adicionando as rotas de usuários
+import exerciseRoutes from './routes/exercise.routes'
 
 dotenv.config();
 
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use('/athletes', athleteRoutes);  // Rota de atletas
 app.use('/users', userRoutes);
+app.use('/exercises', exerciseRoutes);
  // Rota de usuários sem o prefixo /api
 
 app.get('/', (req, res) => {
