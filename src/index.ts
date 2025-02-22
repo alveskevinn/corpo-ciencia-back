@@ -1,7 +1,8 @@
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import { Client } from 'pg'  
+import { Client } from 'pg'
+import athleteRoutes from './routes/athlete.routes'  
 
 dotenv.config()
 
@@ -25,6 +26,8 @@ client.connect()
 app.get('/', (req, res) => {
   res.send('API funcionando!')
 })
+
+app.use('/athletes', athleteRoutes)
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
