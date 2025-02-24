@@ -11,6 +11,12 @@ export const AthleteController = {
         return
       }
 
+      const existingAthlete = await AthleteService.findByEmail(email)
+      if (existingAthlete) {
+        res.status(400).json({ message: 'E-mail já cadastrado' })
+        return
+      }
+
       const newAthlete = await AthleteService.create({ firstName, email, status: 'active' })
       res.status(201).json(newAthlete)
     } catch (error) {

@@ -13,5 +13,10 @@ export const AthleteService = {
   getAll: async (): Promise<Athlete[]> => {
     const result = await pool.query('SELECT * FROM athletes')
     return result.rows
-  }
+  },
+
+  findByEmail: async (email: string): Promise<Athlete | null> => {
+    const result = await pool.query('SELECT * FROM athletes WHERE email = $1 LIMIT 1', [email])
+    return result.rows.length > 0 ? result.rows[0] : null
+  },
 }
