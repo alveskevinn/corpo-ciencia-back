@@ -12,7 +12,7 @@ console.log('DB_PORT:', process.env.DB_PORT)
 
 const pool = new Pool({
   user: process.env.DB_USER || 'postgres',
-  host: process.env.DB_HOST || 'terraform-20250219193740321900000001.czsi2u466pma.us-east-1.rds.amazonaws.com',
+  host: process.env.DB_HOST || 'localhost',
   database: process.env.DB_NAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   port: Number(process.env.DB_PORT) || 5432,

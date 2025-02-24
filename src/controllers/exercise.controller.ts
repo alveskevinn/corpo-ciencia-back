@@ -1,4 +1,3 @@
-// exercise.controller.ts
 import { Request, Response } from 'express';
 import ExerciseService from '../services/exercise.service';
 import { Exercise } from '../models/exercise.model';

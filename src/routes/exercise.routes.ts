@@ -1,14 +1,14 @@
-// exercise.routes.ts
 import express from 'express';
 import ExerciseController from '../controllers/exercise.controller';
+import { authMiddleware } from '../middlewares/auth.middleware'  
 
 
 const router = express.Router();
 
-router.get('/', ExerciseController.getAllExercises);
-router.get('/:id', ExerciseController.getExerciseById);
-router.post('/', ExerciseController.createExercise);
-router.put('/:id', ExerciseController.updateExercise);
-router.delete('/:id', ExerciseController.deleteExercise);
+router.get('/', authMiddleware, ExerciseController.getAllExercises);
+router.get('/:id', authMiddleware, ExerciseController.getExerciseById);
+router.post('/', authMiddleware, ExerciseController.createExercise);
+router.put('/:id', authMiddleware, ExerciseController.updateExercise);
+router.delete('/:id', authMiddleware, ExerciseController.deleteExercise);
 
 export default router;

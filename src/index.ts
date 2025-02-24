@@ -1,9 +1,10 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import athleteRoutes from './routes/athlete.routes';  // Mantendo as rotas de atletas
-import userRoutes from './routes/user.routes';  // Adicionando as rotas de usuários
-import exerciseRoutes from './routes/exercise.routes'
+import athleteRoutes from './routes/athlete.routes';  
+import userRoutes from './routes/user.routes';  
+import exerciseRoutes from './routes/exercise.routes';
+import authRoutes from './routes/auth.routes';  // Importando as rotas de autenticação
 
 dotenv.config();
 
@@ -12,10 +13,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/athletes', athleteRoutes);  // Rota de atletas
+app.use('/athletes', athleteRoutes);  
 app.use('/users', userRoutes);
 app.use('/exercises', exerciseRoutes);
- // Rota de usuários sem o prefixo /api
+app.use('/auth', authRoutes);  // Definindo a rota de autenticação
 
 app.get('/', (req, res) => {
   res.send('API funcionando!');

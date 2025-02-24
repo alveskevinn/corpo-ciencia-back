@@ -1,5 +1,7 @@
 import { Request, Response } from 'express'
 import { AthleteService } from '../services/athlete.service'
+import fichaService from '../services/ficha.service'
+import arquivoService from '../services/arquivo.service'
 
 export const AthleteController = {
   addAthlete: async (req: Request, res: Response): Promise<void> => {
@@ -17,7 +19,11 @@ export const AthleteController = {
         return
       }
 
-      const newAthlete = await AthleteService.create({ firstName, email, status: 'active' })
+      const newAthlete = await AthleteService.create({
+        firstName,
+        email,
+        status: 'active',
+      })
       res.status(201).json(newAthlete)
     } catch (error) {
       res.status(500).json({ message: 'Erro ao criar atleta', error })
@@ -45,7 +51,7 @@ export const AthleteController = {
 
       res.json(athlete)
     } catch (error) {
-      res.status(500).json({message: 'Erro ao buscar atleta', error})
+      res.status(500).json({ message: 'Erro ao buscar atleta', error })
     }
   },
 
@@ -55,13 +61,13 @@ export const AthleteController = {
       const updateAthele = await AthleteService.update(Number(id), req.body)
 
       if (!updateAthele) {
-        res.status(404).json({message: 'Atleta não encontrado'})
+        res.status(404).json({ message: 'Atleta não encontrado' })
         return
       }
 
       res.json(updateAthele)
     } catch (error) {
-      res.status(500).json({ message: ' Erro ao atualizar atleta', error})
+      res.status(500).json({ message: ' Erro ao atualizar atleta', error })
     }
   },
 
@@ -69,9 +75,74 @@ export const AthleteController = {
     try {
       const { id } = req.params
       await AthleteService.delete(Number(id))
-      res.status(204).send() // 204 significa sem conteudo
+      res.status(204).send() 
     } catch (error) {
       res.status(500).json({ message: 'Erro ao deletar atleta', error })
     }
-  }
+  },
+
+  uploadFiles: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { athleteId } = req.body
+      const planFile = req.files?.['planFile'] ? req.files['planFile'][0] : null;
+      const progressFile = req.files?.['progressFile'] ? req.files['progressFile'][0] : null;
+
+      if (!athleteId) {
+        res.status(400).json({ message: 'Atleta ID é obrigatório' })
+        return
+      }
+
+      if (!planFile && !progressFile) {
+        res
+          .status(400)
+          .json({ message: 'Nenhum arquivo de plano ou progresso enviado' })
+        return
+      }
+
+      const uploadedFiles = await arquivoService.uploadFiles(
+        athleteId,
+        planFile,
+        progressFile,
+      )
+
+      const ficha = await fichaService.createFicha(
+        athleteId, 
+        uploadedFiles.planFileUrl, 
+        uploadedFiles.progressFileUrl
+      );
+      
+
+      res.status(201).json(ficha) 
+    } catch (error) {
+      res
+        .status(500)
+        .json({ message: 'Erro ao fazer upload dos arquivos', error })
+    }
+  },
+
+  getFicha: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { athleteId } = req.params
+      const ficha = await fichaService.getFichaById(Number(athleteId))
+
+      if (!ficha) {
+        res.status(404).json({ message: 'Ficha não encontrada' })
+        return
+      }
+
+      res.json(ficha)
+    } catch (error) {
+      res.status(500).json({ message: 'Erro ao buscar ficha', error })
+    }
+  },
+
+  deleteFicha: async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params
+      await fichaService.deleteFicha(Number(id))
+      res.status(204).send() 
+    } catch (error) {
+      res.status(500).json({ message: 'Erro ao deletar ficha', error })
+    }
+  },
 }

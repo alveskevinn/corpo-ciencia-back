@@ -13,7 +13,7 @@ export const userController = {
 
         try {
             const newUser = await userService.createUser(user);
-            res.status(201).json({ ...newUser, password: undefined }); // Removendo senha na resposta
+            res.status(201).json({ ...newUser, password: undefined }); 
         } catch (err) {
             res.status(500).json({ error: 'Error creating user' });
         }

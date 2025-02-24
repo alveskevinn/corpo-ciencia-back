@@ -4,7 +4,6 @@ import { User } from '../models/user.model';
 
 export const userService = {
     createUser: async (user: User): Promise<User> => {
-        // Gerando o hash da senha antes de salvar
         const hashedPassword = await bcrypt.hash(user.password, 10);
 
         const result = await pool.query(
@@ -41,5 +40,11 @@ export const userService = {
 
     deleteUser: async (id: number): Promise<void> => {
         await pool.query('DELETE FROM users WHERE id = $1', [id]);
+    },
+
+    getUserByEmail: async (email: string): Promise<User | null> => {
+        const
+            result = await pool.query('SELECT * FROM users WHERE email = $1 LIMIT 1', [email]);
+        return result.rows.length > 0 ? result.rows[0] : null;
     }
 };
