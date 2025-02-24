@@ -26,11 +26,12 @@ class ExerciseService {
   async updateExercise(id: number, exercise: Exercise): Promise<Exercise | null> {
     const { name, description, category, group_muscular, video_url } = exercise;
     const result = await pool.query(
-      'UPDATE exercicios SET name = $1, description = $2, category = $3, group_muscular = $4, video_url = $5 WHERE id = $6 RETURNING *',
+      'UPDATE exercicios SET nome = $1, descricao = $2, categoria = $3, grupo_muscular = $4, video_url = $5 WHERE id = $6 RETURNING *',
       [name, description, category, group_muscular, video_url, id]
     );
     return result.rows[0] || null;
   }
+  
 
   async deleteExercise(id: number): Promise<boolean> {
     const result = await pool.query('DELETE FROM exercicios WHERE id = $1', [id]);
