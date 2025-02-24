@@ -1,7 +1,10 @@
 export interface Exercise {
-    name: string
-    description: string
-    video: string
-    category: string
+    id: number;
+    name: string;
+    description: string;
+    category: string;
+    group_muscular: string;
+    video_url: string;
+    created_at?: string;
   }
   

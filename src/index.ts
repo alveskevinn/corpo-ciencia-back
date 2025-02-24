@@ -1,35 +1,27 @@
-import express from 'express'
-import cors from 'cors'
-import dotenv from 'dotenv'
-import { Client } from 'pg'
-import athleteRoutes from './routes/athlete.routes'  
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import athleteRoutes from './routes/athlete.routes';  // Mantendo as rotas de atletas
+import userRoutes from './routes/user.routes';  // Adicionando as rotas de usuários
+import exerciseRoutes from './routes/exercise.routes'
 
-dotenv.config()
+dotenv.config();
 
-const app = express()
+const app = express();
 
-app.use(cors())
-app.use(express.json())
+app.use(cors());
+app.use(express.json());
 
-const client = new Client({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USERNAME,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE,
-})
-
-client.connect()
-  .then(() => console.log('Conectado ao banco de dados PostgreSQL'))
-  .catch((err) => console.error('Erro de conexão com o banco de dados:', err.stack))
+app.use('/athletes', athleteRoutes);  // Rota de atletas
+app.use('/users', userRoutes);
+app.use('/exercises', exerciseRoutes);
+ // Rota de usuários sem o prefixo /api
 
 app.get('/', (req, res) => {
-  res.send('API funcionando!')
-})
+  res.send('API funcionando!');
+});
 
-app.use('/athletes', athleteRoutes)
-
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`)
-})
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
