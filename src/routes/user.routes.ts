@@ -5,7 +5,7 @@ import { authMiddleware } from '../middlewares/auth.middleware';
 const router = Router();
 
 router.post('/validate-password', authMiddleware, userController.validatePassword);
-router.post('/', authMiddleware, userController.createUser);
+router.post('/', userController.createUser);
 router.get('/', authMiddleware, userController.getAllUsers);
 router.get('/:id', authMiddleware, userController.getUserById);
 router.put('/:id', authMiddleware, userController.updateUser);

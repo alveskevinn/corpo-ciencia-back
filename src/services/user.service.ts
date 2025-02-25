@@ -28,11 +28,10 @@ export const userService = {
     },
    
     updateUser: async (id: number, user: Partial<User>): Promise<User | null> => {
-        let hashedPassword = user.password ? await bcrypt.hash(user.password, 10) : undefined;
 
         const result = await pool.query(
             'UPDATE users SET first_name = $1, last_name = $2, email = $3, role = $4, status = $5, password = COALESCE($6, password), updated_at = CURRENT_TIMESTAMP WHERE id = $7 RETURNING *',
-            [user.first_name, user.last_name, user.email, user.role, user.status, hashedPassword, id]
+            [user.first_name, user.last_name, user.email, user.role, user.status, user.password, id]
         );
 
         return result.rows[0] || null;

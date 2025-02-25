@@ -55,7 +55,6 @@ export const userController = {
                 return;
             }
     
-            // Verifica se a senha atual foi fornecida
             if (currentPassword) {
                 const validPassword = await bcrypt.compare(currentPassword, user.password);
                 if (!validPassword) {
@@ -77,7 +76,6 @@ export const userController = {
                 res.status(404).json({ error: 'User not found' });
             }
         } catch (err) {
-            // Adicionando log de erro aqui
             console.error('Error updating user:', err);
             res.status(500).json({ error: 'Error updating user' });
         }
