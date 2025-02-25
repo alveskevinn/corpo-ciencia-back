@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import athleteRoutes from './routes/athlete.routes';  
 import userRoutes from './routes/user.routes';  
 import exerciseRoutes from './routes/exercise.routes';
-import authRoutes from './routes/auth.routes';  // Importando as rotas de autenticação
+import authRoutes from './routes/auth.routes'; 
 
 dotenv.config();
 
@@ -12,11 +12,12 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); 
 
 app.use('/athletes', athleteRoutes);  
 app.use('/users', userRoutes);
 app.use('/exercises', exerciseRoutes);
-app.use('/auth', authRoutes);  // Definindo a rota de autenticação
+app.use('/auth', authRoutes);  
 
 app.get('/', (req, res) => {
   res.send('API funcionando!');

@@ -1,43 +1,68 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import pool from '../config/db.config';
-import { Request } from 'express';
-
-const s3Client = new S3Client({
-  region: process.env.AWS_REGION, 
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
+import { Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
+import * as XLSX from 'xlsx';
 
 class ArquivoService {
   async uploadFiles(athleteId: number, planFile: any, progressFile: any) {
     try {
-      const planFileUrl = planFile ? await this.uploadToS3(planFile, 'plan', athleteId) : null;
-      const progressFileUrl = progressFile ? await this.uploadToS3(progressFile, 'progress', athleteId) : null;
+      const uploadDir = path.resolve(__dirname, '../../uploads');
 
-      return { planFileUrl, progressFileUrl };
+      // Verifica se o diretório existe, senão cria
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true });
+      }
+
+      const planFilePath = planFile ? `${uploadDir}/${athleteId}-plan-${Date.now()}.xlsx` : null;
+      const progressFilePath = progressFile ? `${uploadDir}/${athleteId}-progress-${Date.now()}.xlsx` : null;
+
+      let extractedData = null;
+
+      if (planFile) {
+        fs.writeFileSync(planFilePath, planFile.buffer);
+        extractedData = this.readExcel(planFilePath);
+      }
+
+      if (progressFile) {
+        fs.writeFileSync(progressFilePath, progressFile.buffer);
+      }
+
+      return { 
+        planFileUrl: planFilePath, 
+        progressFileUrl: progressFilePath,
+        extractedData 
+      };
     } catch (error) {
-      throw new Error('Erro ao fazer upload dos arquivos: ' + error.message);
+      throw new Error('Erro ao processar os arquivos: ' + error.message);
     }
   }
 
-  private async uploadToS3(file: any, type: string, athleteId: number): Promise<string> {
-    const fileName = `${athleteId}-${type}-${Date.now()}`; 
-
-    const params = {
-      Bucket: process.env.AWS_S3_BUCKET_NAME!,  
-      Key: fileName,  
-      Body: file.buffer,  
-      ContentType: file.mimetype,  
-    };
-
+  private readExcel(filePath: string) {
     try {
-      const data = await s3Client.send(new PutObjectCommand(params));
-      
-      return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/arquivos/${fileName}`;
-    } catch (err) {
-      throw new Error('Erro no upload: ' + err.message);
+      const workbook = XLSX.readFile(filePath);
+      const sheetName = workbook.SheetNames[0]; 
+      const sheet = workbook.Sheets[sheetName];
+
+      const result = {};
+
+      for (let i = 2; i <= 8; i++) {
+        const bCellRef = `A${i}`;
+        const cCellRef = `B${i - 1}`; 
+
+        const bValue = sheet[bCellRef]?.v;
+        const cValue = sheet[cCellRef]?.v;
+
+        if (bValue !== undefined && cValue !== undefined) {
+          result[bValue] = cValue;
+        }
+      }
+
+      console.log(`Dados extraídos do Excel (${filePath}):`, result);
+      return result;
+    } catch (error) {
+      console.error(`Erro ao ler o arquivo Excel ${filePath}:`, error);
+      throw new Error(`Erro ao ler o arquivo Excel: ${error.message || error}`);
     }
   }
 }
