@@ -21,12 +21,12 @@ export const userService = {
 
     getUserById: async (id: number): Promise<User | null> => {
         const result = await pool.query(
-            'SELECT id, first_name, last_name, email, role, status, created_at, updated_at FROM users WHERE id = $1',
+            'SELECT id, first_name, last_name, email, role, status, created_at, updated_at, password FROM users WHERE id = $1',
             [id]
         );
         return result.rows[0] || null;
     },
-
+   
     updateUser: async (id: number, user: Partial<User>): Promise<User | null> => {
         let hashedPassword = user.password ? await bcrypt.hash(user.password, 10) : undefined;
 
@@ -43,8 +43,7 @@ export const userService = {
     },
 
     getUserByEmail: async (email: string): Promise<User | null> => {
-        const
-            result = await pool.query('SELECT * FROM users WHERE email = $1 LIMIT 1', [email]);
+        const result = await pool.query('SELECT * FROM users WHERE email = $1 LIMIT 1', [email]);
         return result.rows.length > 0 ? result.rows[0] : null;
     }
 };

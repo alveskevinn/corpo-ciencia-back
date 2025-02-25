@@ -20,8 +20,15 @@ export const authController = {
                 return res.status(400).json({ error: 'Senha inválida' });
             }
 
+            // Incluindo o nome do usuário no payload do token
             const token = jwt.sign(
-                { id: user.id, email: user.email, role: user.role },
+                { 
+                    id: user.id, 
+                    email: user.email, 
+                    role: user.role,
+                    first_name: user.first_name,  // Adicionando o nome
+                    last_name: user.last_name     // Adicionando o sobrenome
+                },
                 JWT_SECRET,
                 { expiresIn: '1h' } 
             );
@@ -32,3 +39,4 @@ export const authController = {
         }
     }
 };
+
