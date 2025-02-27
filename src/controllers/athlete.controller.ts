@@ -84,6 +84,7 @@ export const AthleteController = {
   uploadFiles: async (req: Request, res: Response): Promise<void> => {
     try {
       const { athleteId } = req.body
+      console.log(req.body)
       const planFile = req.files?.['planFile'] ? req.files['planFile'][0] : null;
       const progressFile = req.files?.['progressFile'] ? req.files['progressFile'][0] : null;
 
