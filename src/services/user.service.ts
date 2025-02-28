@@ -6,43 +6,43 @@ export const userService = {
     createUser: async (user: User): Promise<User> => {
         const hashedPassword = await bcrypt.hash(user.password, 10);
 
-        const result = await pool.query(
-            'INSERT INTO users (first_name, last_name, email, password, role, status) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+        const [result] = await pool.execute(
+            'INSERT INTO users (first_name, last_name, email, password, role, status) VALUES (?, ?, ?, ?, ?, ?)',
             [user.first_name, user.last_name, user.email, hashedPassword, user.role, user.status]
         );
-        
-        return result.rows[0];
+
+        const insertId = (result as any).insertId;
+        return userService.getUserById(insertId);
     },
 
     getAllUsers: async (): Promise<User[]> => {
-        const result = await pool.query('SELECT id, first_name, last_name, email, role, status, created_at, updated_at FROM users');
-        return result.rows;
+        const [rows] = await pool.execute('SELECT id, first_name, last_name, email, role, status, created_at, updated_at FROM users');
+        return rows as User[]; 
     },
 
     getUserById: async (id: number): Promise<User | null> => {
-        const result = await pool.query(
-            'SELECT id, first_name, last_name, email, role, status, created_at, updated_at, password FROM users WHERE id = $1',
+        const [rows] = await pool.execute(
+            'SELECT id, first_name, last_name, email, role, status, created_at, updated_at, password FROM users WHERE id = ?',
             [id]
         );
-        return result.rows[0] || null;
+        return Array.isArray(rows) && rows.length > 0 ? rows[0] as User : null;
     },
    
     updateUser: async (id: number, user: Partial<User>): Promise<User | null> => {
-
-        const result = await pool.query(
-            'UPDATE users SET first_name = $1, last_name = $2, email = $3, role = $4, status = $5, password = COALESCE($6, password), updated_at = CURRENT_TIMESTAMP WHERE id = $7 RETURNING *',
+        const [result] = await pool.execute(
+            'UPDATE users SET first_name = ?, last_name = ?, email = ?, role = ?, status = ?, password = COALESCE(?, password), updated_at = CURRENT_TIMESTAMP WHERE id = ?',
             [user.first_name, user.last_name, user.email, user.role, user.status, user.password, id]
         );
 
-        return result.rows[0] || null;
+        return userService.getUserById(id);
     },
 
     deleteUser: async (id: number): Promise<void> => {
-        await pool.query('DELETE FROM users WHERE id = $1', [id]);
+        await pool.execute('DELETE FROM users WHERE id = ?', [id]);
     },
 
     getUserByEmail: async (email: string): Promise<User | null> => {
-        const result = await pool.query('SELECT * FROM users WHERE email = $1 LIMIT 1', [email]);
-        return result.rows.length > 0 ? result.rows[0] : null;
+        const [rows] = await pool.execute('SELECT * FROM users WHERE email = ? LIMIT 1', [email]);
+        return Array.isArray(rows) && rows.length > 0 ? rows[0] as User : null;
     }
 };
