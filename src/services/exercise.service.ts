@@ -15,35 +15,23 @@ class ExerciseService {
   }
 
   async createExercise(exercise: Exercise): Promise<Exercise> {
-    const { name, description, category, group_muscular, video_url } = exercise
-    const [result] = await pool.execute(
-      'INSERT INTO exercicios (nome, descricao, categoria, grupo_muscular, video_url) VALUES (?, ?, ?, ?, ?)',
-      [name, description, category, group_muscular, video_url],
-    )
-    const insertedId = (result as any).insertId 
-    return {
-      id: insertedId,
-      name,
-      description,
-      category,
-      group_muscular,
-      video_url,
-    }
+    const { name, musculo_principal, category, group_muscular, video_url, auxiliar_1, auxiliar_2 } = exercise;
+    const query = `INSERT INTO exercicios (nome, musculo_principal, categoria, grupo_muscular, video_url, auxiliar_1, auxiliar_2) 
+                   VALUES (?, ?, ?, ?, ?, ?, ?)`;
+    const [result] = await pool.execute(query, [name, musculo_principal, category, group_muscular, video_url, auxiliar_1, auxiliar_2]);
+    const insertedId = (result as any).insertId;
+    const [rows] = await pool.execute('SELECT * FROM exercicios WHERE id = ?', [insertedId]);
+    return (rows as Exercise[])[0];
   }
-
-  async updateExercise(
-    id: number,
-    exercise: Exercise,
-  ): Promise<Exercise | null> {
-    const { name, description, category, group_muscular, video_url } = exercise
-    const [result] = await pool.execute(
-      'UPDATE exercicios SET nome = ?, descricao = ?, categoria = ?, grupo_muscular = ?, video_url = ? WHERE id = ?',
-      [name, description, category, group_muscular, video_url, id],
-    )
-    const affectedRows = (result as any).affectedRows // A propriedade 'affectedRows' está dentro de 'result'
-    return affectedRows > 0
-      ? { id, name, description, category, group_muscular, video_url }
-      : null
+  
+  async updateExercise(id: number, exercise: Exercise): Promise<Exercise | null> {
+    const { name, musculo_principal, category, group_muscular, video_url, auxiliar_1, auxiliar_2 } = exercise;
+    const query = `UPDATE exercicios SET nome = ?, musculo_principal = ?, categoria = ?, grupo_muscular = ?, video_url = ?, 
+                   auxiliar_1 = ?, auxiliar_2 = ? WHERE id = ?`;
+    const [result] = await pool.execute(query, [name, musculo_principal, category, group_muscular, video_url, auxiliar_1, auxiliar_2, id]);
+    if ((result as any).affectedRows === 0) return null;
+    const [rows] = await pool.execute('SELECT * FROM exercicios WHERE id = ?', [id]);
+    return (rows as Exercise[])[0] || null;
   }
 
   async deleteExercise(id: number): Promise<boolean> {
