@@ -77,7 +77,7 @@ export const userController = {
             }
         } catch (err) {
             console.error('Error updating user:', err);
-            res.status(500).json({ error: 'Error updating user' });
+            res.status(500).json({ error: 'Error updating user', details: err });
         }
     },
     

@@ -57,19 +57,26 @@ export const AthleteController = {
 
   updateAthlete: async (req: Request, res: Response): Promise<void> => {
     try {
-      const { id } = req.params
-      const updateAthele = await AthleteService.update(Number(id), req.body)
-
-      if (!updateAthele) {
-        res.status(404).json({ message: 'Atleta não encontrado' })
-        return
+      const { id } = req.params;
+      const data = req.body;
+  
+      if (!data.firstName || !data.email || !data.status) {
+        res.status(400).json({ message: 'Campos obrigatórios ausentes: firstName, email ou status' });
+        return;
       }
-
-      res.json(updateAthele)
+  
+      const updateAthele = await AthleteService.update(Number(id), data);
+  
+      if (!updateAthele) {
+        res.status(404).json({ message: 'Atleta não encontrado' });
+        return;
+      }
+  
+      res.json(updateAthele);
     } catch (error) {
-      res.status(500).json({ message: ' Erro ao atualizar atleta', error })
+      res.status(500).json({ message: 'Erro ao atualizar atleta', error });
     }
-  },
+  },  
 
   deleteAthlete: async (req: Request, res: Response): Promise<void> => {
     try {

@@ -29,9 +29,12 @@ export const userService = {
     },
    
     updateUser: async (id: number, user: Partial<User>): Promise<User | null> => {
+                // Se a senha não for fornecida, definimos como null
+        const passwordToUpdate = user.password === undefined ? null : user.password;
+
         const [result] = await pool.execute(
             'UPDATE users SET first_name = ?, last_name = ?, email = ?, role = ?, status = ?, password = COALESCE(?, password), updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-            [user.first_name, user.last_name, user.email, user.role, user.status, user.password, id]
+            [user.first_name, user.last_name, user.email, user.role, user.status, passwordToUpdate, id]
         );
 
         return userService.getUserById(id);
