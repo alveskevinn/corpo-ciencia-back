@@ -5,6 +5,7 @@ import athleteRoutes from './routes/athlete.routes';
 import userRoutes from './routes/user.routes';  
 import exerciseRoutes from './routes/exercise.routes';
 import authRoutes from './routes/auth.routes'; 
+import authathleteRoutes from './routes/authathlete.routes';
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ app.use('/athletes', athleteRoutes);
 app.use('/users', userRoutes);
 app.use('/exercises', exerciseRoutes);
 app.use('/auth', authRoutes);  
+app.use('/auth', authathleteRoutes);
 
 app.get('/', (req, res) => {
   res.send('API funcionando!');

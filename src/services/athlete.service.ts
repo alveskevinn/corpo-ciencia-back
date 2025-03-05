@@ -8,15 +8,21 @@ export const AthleteService = {
       [firstName, email, status]
     )
     const id = (result as any).insertId
-    return { id, firstName, email, status } 
+    return { id, firstName, email, status }
   },
 
   getAll: async (): Promise<Athlete[]> => {
     const [result] = await pool.execute('SELECT * FROM athletes')
-    return result as Athlete[] 
+    return result as Athlete[]
   },
 
   findByEmail: async (email: string): Promise<Athlete | null> => {
+    const [result] = await pool.execute('SELECT * FROM athletes WHERE email = ? LIMIT 1', [email])
+    return (result as Athlete[]).length > 0 ? (result as Athlete[])[0] : null
+  },
+
+  // Função getAthleteByEmail adicionada
+  getAthleteByEmail: async (email: string): Promise<Athlete | null> => {
     const [result] = await pool.execute('SELECT * FROM athletes WHERE email = ? LIMIT 1', [email])
     return (result as Athlete[]).length > 0 ? (result as Athlete[])[0] : null
   },
