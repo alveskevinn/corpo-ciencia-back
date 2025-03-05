@@ -27,13 +27,20 @@ export const AthleteService = {
   },
 
   update: async (id: number, data: Partial<Omit<Athlete, 'id'>>) => {
-    const { firstName, email, status } = data
+    const { firstName, email, status } = data;
+
+    const safeFirstName = firstName !== undefined ? firstName : null;
+    const safeEmail = email !== undefined ? email : null;
+    const safeStatus = status !== undefined ? status : null;
+
     const [result] = await pool.execute(
-      'UPDATE athletes SET firstname = COALESCE(?, firstname), email = COALESCE(?, email), status = COALESCE(?, status) WHERE id = ?',
-      [firstName, email, status, id]
-    )
-    return (result as any).affectedRows > 0 ? { id, firstName, email, status } : null
-  },
+        'UPDATE athletes SET firstname = COALESCE(?, firstname), email = COALESCE(?, email), status = COALESCE(?, status) WHERE id = ?',
+        [safeFirstName, safeEmail, safeStatus, id]
+    );
+
+    return (result as any).affectedRows > 0 ? { id, firstName, email, status } : null;
+},
+
 
   delete: async (id: number) => {
     await pool.execute('DELETE FROM athletes WHERE id = ?', [id])
