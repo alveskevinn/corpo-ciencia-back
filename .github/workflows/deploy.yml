@@ -37,6 +37,12 @@ jobs:
           # Copiar o conteúdo do diretório dist para o servidor
           scp -r dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/corpo-ciencia-back
 
+      - name: Check pm2 version
+        run: |
+          echo $PATH
+          pm2 --version
+
+
       - name: Restart application
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
