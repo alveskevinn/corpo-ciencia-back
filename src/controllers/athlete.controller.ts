@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import { AthleteService } from '../services/athlete.service'
 import fichaService from '../services/ficha.service'
-import arquivoService from '../services/arquivo.service'
 
 export const AthleteController = {
   addAthlete: async (req: Request, res: Response): Promise<void> => {
@@ -88,45 +87,45 @@ export const AthleteController = {
     }
   },
 
-  uploadFiles: async (req: Request, res: Response): Promise<void> => {
-    try {
-      const { athleteId } = req.body
-      console.log(req.body)
-      const planFile = req.files?.['planFile'] ? req.files['planFile'][0] : null;
-      const progressFile = req.files?.['progressFile'] ? req.files['progressFile'][0] : null;
+  // uploadFiles: async (req: Request, res: Response): Promise<void> => {
+  //   try {
+  //     const { athleteId } = req.body
+  //     console.log(req.body)
+  //     const planFile = req.files?.['planFile'] ? req.files['planFile'][0] : null;
+  //     const progressFile = req.files?.['progressFile'] ? req.files['progressFile'][0] : null;
 
-      if (!athleteId) {
-        res.status(400).json({ message: 'Atleta ID é obrigatório' })
-        return
-      }
+  //     if (!athleteId) {
+  //       res.status(400).json({ message: 'Atleta ID é obrigatório' })
+  //       return
+  //     }
 
-      if (!planFile && !progressFile) {
-        res
-          .status(400)
-          .json({ message: 'Nenhum arquivo de plano ou progresso enviado' })
-        return
-      }
+  //     if (!planFile && !progressFile) {
+  //       res
+  //         .status(400)
+  //         .json({ message: 'Nenhum arquivo de plano ou progresso enviado' })
+  //       return
+  //     }
 
-      const uploadedFiles = await arquivoService.uploadFiles(
-        athleteId,
-        planFile,
-        progressFile,
-      )
+  //     const uploadedFiles = await arquivoService.uploadFiles(
+  //       athleteId,
+  //       planFile,
+  //       progressFile,
+  //     )
 
-      const ficha = await fichaService.createFicha(
-        athleteId, 
-        uploadedFiles.planFileUrl, 
-        uploadedFiles.progressFileUrl
-      );
+  //     const ficha = await fichaService.createFicha(
+  //       athleteId, 
+  //       uploadedFiles.planFileUrl, 
+  //       uploadedFiles.progressFileUrl
+  //     );
       
 
-      res.status(201).json(ficha) 
-    } catch (error) {
-      res
-        .status(500)
-        .json({ message: 'Erro ao fazer upload dos arquivos', error })
-    }
-  },
+  //     res.status(201).json(ficha) 
+  //   } catch (error) {
+  //     res
+  //       .status(500)
+  //       .json({ message: 'Erro ao fazer upload dos arquivos', error })
+  //   }
+  // },
 
   getFicha: async (req: Request, res: Response): Promise<void> => {
     try {

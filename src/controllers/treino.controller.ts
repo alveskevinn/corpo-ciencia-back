@@ -8,12 +8,10 @@ export class TrainingController {
     this.trainingService = new TrainingService();
   }
 
-  // Criação de treino com exercícios
   async createTraining(req: Request, res: Response) {
     try {
-      const trainingData = req.body; // Aqui, vamos receber um array de objetos.
+      const trainingData = req.body; 
 
-      // Verificar se o campo "aluno" está presente em cada item do array
       for (let treino of trainingData) {
         if (!treino.aluno) {
           return res.status(400).json({ error: 'Campo "aluno" é obrigatório em todos os treinos' });
@@ -25,18 +23,15 @@ export class TrainingController {
           return res.status(400).json({ error: 'Campo "text" é obrigatório em todos os treinos' });
         }
 
-        // Verificar se os campos obrigatórios dentro de exercicios estão presentes
         if (!treino.exercicio || treino.exercicio.length === 0) {
           return res.status(400).json({ error: 'Nenhum exercício fornecido em um dos treinos' });
         }
 
-        // Verificar se os campos obrigatórios dentro de aerobicos estão presentes, caso existam
         if (treino.showAerobicos && (!treino.aerobicos || treino.aerobicos.length === 0)) {
           return res.status(400).json({ error: 'Aeroóbicos são obrigatórios quando showAerobicos é verdadeiro' });
         }
       }
 
-      // Chamar o serviço para processar o array de treinos
       const result = await this.trainingService.createTraining(trainingData);
       res.status(201).json(result);
     } catch (error) {
@@ -45,7 +40,6 @@ export class TrainingController {
     }
   }
 
-  // Obter treinos
   async getTrainings(req: Request, res: Response) {
     try {
       const trainings = await this.trainingService.getTrainings();

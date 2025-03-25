@@ -12,6 +12,6 @@ router.get('/', authMiddleware, AthleteController.getAllAthletes)
 router.get('/:id', authMiddleware, AthleteController.getAthleteByID)
 router.put('/:id', authMiddleware, AthleteController.updateAthlete)
 router.delete('/:id', authMiddleware, AthleteController.deleteAthlete)
-router.post('/upload', upload.fields([{ name: 'planFile' }, { name: 'progressFile' }]), AthleteController.uploadFiles);
+// router.post('/upload', upload.fields([{ name: 'planFile' }, { name: 'progressFile' }]), AthleteController.uploadFiles);
 
 export default router

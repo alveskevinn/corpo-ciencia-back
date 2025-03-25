@@ -6,11 +6,11 @@ import bcrypt from 'bcrypt';
 const JWT_SECRET = process.env.JWT_SECRET;
 
 if (!JWT_SECRET) {
-    console.error('ERRO: JWT_SECRET não está definido no .env');
+    throw new Error('JWT_SECRET não está definido no .env');
 }
 
 export const authController = {
-    login: async (req, res) => {
+    login: async (req: any, res: any) => {
         const { email, password } = req.body;
 
         console.log('Tentativa de login com e-mail:', email);
@@ -22,7 +22,7 @@ export const authController = {
                 return res.status(404).json({ error: 'Usuário não encontrado' });
             }
 
-            console.log('Usuário encontrado:', user);
+            console.log('Usuário encontrado:', user.email);
 
             if (!user.password) {
                 console.error(`Senha não encontrada para o usuário ${email}`);
@@ -47,10 +47,10 @@ export const authController = {
                         last_name: user.last_name   
                     },
                     JWT_SECRET,
-                    { expiresIn: '1h' } 
+                    { expiresIn: '1h' }
                 );
 
-                console.log(`Token gerado para ${email}:`, token);
+                console.log(`Token gerado para ${email}`);
                 return res.status(200).json({ token });
 
             } catch (tokenError) {

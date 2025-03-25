@@ -3,7 +3,7 @@ import pool from '../config/db.config';
 import { User } from '../models/user.model';
 
 export const userService = {
-    createUser: async (user: User): Promise<User> => {
+    createUser: async (user: User): Promise<any> => {
         const hashedPassword = await bcrypt.hash(user.password, 10);
 
         const [result] = await pool.execute(
