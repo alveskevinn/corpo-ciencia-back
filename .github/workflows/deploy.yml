@@ -40,6 +40,8 @@ jobs:
       - name: Restart application
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
+            echo \"Usuário atual: \$(whoami)\" &&  # Mostra o usuário
+            echo \$PATH &&  # Imprime o valor do PATH
             cd /var/www/html/corpo-ciencia-back &&
             npm install --production &&
             pm2 restart corpo_ciencia_back
