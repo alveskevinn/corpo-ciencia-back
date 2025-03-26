@@ -35,16 +35,12 @@ jobs:
       - name: Deploy dist to server
         run: |
           # Copiar o conteúdo do diretório dist para o servidor
-          scp -r dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/corpo-ciencia-back/
-
-      - name: Check pm2 version
-        run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "which pm2"
+          scp -r dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/corpo-ciencia-back
 
       - name: Restart application
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             cd /var/www/html/corpo-ciencia-back &&
             npm install --production &&
-            /home/superuser/.nvm/versions/node/v20.11.0/bin/pm2 restart corpo_ciencia_back
+            pm2 restart corpo_ciencia_back
           "

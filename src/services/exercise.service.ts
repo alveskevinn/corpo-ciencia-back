@@ -2,13 +2,13 @@ import { Exercise } from '../models/exercise.model'
 import pool from '../config/db.config'
 
 class ExerciseService {
-  async getAllExercises(): Promise<Exercise[]> {
-    const [rows] = await pool.execute('SELECT * FROM exercicios')
-    return rows as Exercise[]
+  async getAllExercises(): Promise<any[]> {
+    const [rows] = await pool.execute('SELECT * FROM exercises')
+    return rows as any[]
   }
 
   async getExerciseById(id: number): Promise<Exercise | null> {
-    const [rows] = await pool.execute('SELECT * FROM exercicios WHERE id = ?', [
+    const [rows] = await pool.execute('SELECT * FROM exercises WHERE id = ?', [
       id,
     ])
     return (rows as Exercise[]).length > 0 ? (rows as Exercise[])[0] : null
@@ -16,53 +16,50 @@ class ExerciseService {
 
   async createExercise(exercise: any): Promise<Exercise> {
     const {
-      exercicio_principal,
-      video_url,
-      exercicio_aux1,
-      exercicio_aux2,
+      exercicio,
+      musculo_principal,
+      video,
+      musculo_aux1,
+      musculo_aux2,
     } = exercise;
-  
+
     const sanitizedValues = [
-      exercicio_principal ?? null,  
-      video_url ?? null,
-      exercicio_aux1 ?? null,
-      exercicio_aux2 ?? null,
+      exercicio ?? null,
+      musculo_principal ?? null,
+      video ?? null,
+      musculo_aux1 ?? null,
+      musculo_aux2 ?? null,
     ];
-  
-    const query = `INSERT INTO exercicios (exercicio_principal, video_url, exercicio_aux1, exercicio_aux2) 
-                   VALUES (?, ?, ?, ?)`;
-  
+
+    const query = `INSERT INTO exercises (exercicio, musculo_principal, video, musculo_aux1, musculo_aux2) 
+                   VALUES (?, ?, ?, ?, ?)`;
+
     try {
       const [result] = await pool.execute(query, sanitizedValues);
       const insertedId = (result as any).insertId;
-      const [rows] = await pool.execute('SELECT * FROM exercicios WHERE id = ?', [insertedId]);
+      const [rows] = await pool.execute('SELECT * FROM exercises WHERE id = ?', [insertedId]);
       return (rows as Exercise[])[0];
     } catch (error) {
-      // Logando o erro completo
-      console.error('Error creating exercise:', error);
   
-      // Jogando o erro novamente com detalhes
       throw new Error(`Error creating exercise: ${JSON.stringify(error)}`);
     }
   }
-  
-  
-  
+
   async updateExercise(id: number, exercise: any): Promise<Exercise | null> {
-    const { name, musculo_principal, group_muscular, video_url, exercicio_aux1, exercicio_aux2 } = exercise;
-    const query = `UPDATE exercicios SET nome = ?, musculo_principal = ?,  grupo_muscular = ?, video_url = ?, 
-                   exercicio_aux1 = ?, exercicio_aux2 = ? WHERE id = ?`;
-    const [result] = await pool.execute(query, [name, musculo_principal,  group_muscular, video_url, exercicio_aux1, exercicio_aux2, id]);
+    const { exercicio, musculo_principal, video, musculo_aux1, musculo_aux2 } = exercise;
+    const query = `UPDATE exercises SET exercicio = ?, musculo_principal = ?, video = ?, musculo_aux1 = ?, 
+                   musculo_aux2 = ? WHERE id = ?`;
+    const [result] = await pool.execute(query, [exercicio, musculo_principal, video, musculo_aux1, musculo_aux2, id]);
     if ((result as any).affectedRows === 0) return null;
-    const [rows] = await pool.execute('SELECT * FROM exercicios WHERE id = ?', [id]);
+    const [rows] = await pool.execute('SELECT * FROM exercises WHERE id = ?', [id]);
     return (rows as Exercise[])[0] || null;
   }
 
   async deleteExercise(id: number): Promise<boolean> {
-    const [result] = await pool.execute('DELETE FROM exercicios WHERE id = ?', [
+    const [result] = await pool.execute('DELETE FROM exercises WHERE id = ?', [
       id,
     ])
-    const affectedRows = (result as any).affectedRows // A propriedade 'affectedRows' está dentro de 'result'
+    const affectedRows = (result as any).affectedRows 
     return affectedRows > 0
   }
 }
