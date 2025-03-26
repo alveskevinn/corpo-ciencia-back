@@ -44,5 +44,5 @@ jobs:
             echo \$PATH &&  # Imprime o valor do PATH
             cd /var/www/html/corpo-ciencia-back &&
             npm install --production &&
-            /home/superuser/.nvm/versions/node/v20.11.0/bin/pm2 restart corpo_ciencia_back
+            /home/superuser/.nvm/versions/node/v20.11.0/bin/pm2 restart corpo-ciencia-back
           "
