@@ -37,12 +37,13 @@ jobs:
           # Copiar o conteúdo do diretório dist para o servidor
           scp -r dist/* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/var/www/html/corpo-ciencia-back
 
-      - name: Restart application
+      - name: Restart application with git pull
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "
             echo \"Usuário atual: \$(whoami)\" &&  # Mostra o usuário
             echo \$PATH &&  # Imprime o valor do PATH
             cd /var/www/html/corpo-ciencia-back &&
+            git pull origin main &&  # Atualiza o repositório
             npm install --production &&
             /home/superuser/.nvm/versions/node/v20.11.0/bin/pm2 restart corpo-ciencia-back
           "
