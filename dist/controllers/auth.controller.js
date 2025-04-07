@@ -39,7 +39,7 @@ exports.authController = {
                     role: user.role,
                     first_name: user.first_name,
                     last_name: user.last_name
-                }, JWT_SECRET, { expiresIn: '1h' });
+                }, JWT_SECRET, { expiresIn: '4h' });
                 console.log(`Token gerado para ${email}`);
                 return res.status(200).json({ token });
             }
