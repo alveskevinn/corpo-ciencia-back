@@ -29,9 +29,10 @@ class MobilidadeController {
 
   async create(req: Request, res: Response): Promise<void> {
     try {
-      const name = req.body.name?.toString().trim();
+      const name = req.body.exercicio?.toString().trim();
 
       let videoUrl: string | null = null;
+      const regiao_trabalhada = req.body.regiao_trabalhada?.toString().trim();
       if (req.file) {
         videoUrl = await uploadVideoToS3(req.file);
       }
@@ -39,6 +40,7 @@ class MobilidadeController {
       const novaMobilidade = await MobilidadeService.create({
         name,
         video_url: videoUrl,
+        regiao_trabalhada: regiao_trabalhada
       });
 
       res.status(201).json(novaMobilidade);

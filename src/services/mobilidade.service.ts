@@ -13,38 +13,44 @@ class MobilidadeService {
   }
 
   async create(data: Partial<Mobilidade>): Promise<Mobilidade> {
-    const { name, video_url } = data
-
+    const { name, video_url, regiao_trabalhada } = data;
+  
     const query = `
-      INSERT INTO mobilidade (name, video_url)
-      VALUES (?, ?)
-    `
-
+      INSERT INTO mobilidade (name, video_url, regiao_trabalhada)
+      VALUES (?, ?, ?)
+    `;
+  
     try {
-      const [result] = await pool.execute(query, [name ?? null, video_url ?? null])
-      const insertedId = (result as any).insertId
-
-      const [rows] = await pool.execute('SELECT * FROM mobilidade WHERE id = ?', [insertedId])
-      return (rows as Mobilidade[])[0]
+      const [result] = await pool.execute(query, [
+        name ?? null,
+        video_url ?? null,
+        regiao_trabalhada ?? null, // ✅ Incluído o parâmetro faltante
+      ]);
+  
+      const insertedId = (result as any).insertId;
+  
+      const [rows] = await pool.execute('SELECT * FROM mobilidade WHERE id = ?', [insertedId]);
+      return (rows as Mobilidade[])[0];
     } catch (error: any) {
-      console.error('Erro ao criar mobilidade:', error)
-
+      console.error('Erro ao criar mobilidade:', error);
+  
       const message =
         error instanceof Error
           ? error.message
           : typeof error === 'string'
           ? error
-          : JSON.stringify(error)
-
-      throw new Error(`Erro ao criar mobilidade: ${message}`)
+          : JSON.stringify(error);
+  
+      throw new Error(`Erro ao criar mobilidade: ${message}`);
     }
   }
+  
 
   async update(id: number, data: Partial<Mobilidade>): Promise<Mobilidade | null> {
     const { name, video_url } = data
 
     const query = `
-      UPDATE mobilidade SET name = ?, video_url = ? WHERE id = ?
+      UPDATE mobilidade SET name = ?, video_url = ?, regiao_trabalhada = ? WHERE id = ?
     `
     const [result] = await pool.execute(query, [name ?? null, video_url ?? null, id])
     if ((result as any).affectedRows === 0) return null
